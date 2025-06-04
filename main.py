@@ -18,6 +18,28 @@ def display_menu():
         print(f"{number}. {name} - ${price}")
 
 def select_menu():
+    order = {}
+    while True:
+        try:
+            choice = int(input("Enter item number you would like to order "))
+            if choice in menu_items:
+                quantity = int(input("How many would you like? "))
+                if choice in order:
+                    order[choice] += quantity
+                else:
+                    order[choice] = quantity
+            else:
+                print("That's not on the menu! Try again.")
+        except ValueError:
+            print("Please enter a number.")
+        if len(order) >= 3:
+            more = input("Would you like to order more? (y/n)").lower()
+            if more != "y":
+                break
 
+
+    return order
 
 display_menu()
+order = select_menu()
+print("your order: ", order)

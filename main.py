@@ -1,3 +1,5 @@
+from multiprocessing.connection import address_type
+
 menu_items={
     1: ("Kawakawa Spritzer", 6),
     2: ("Pork and Puha Slider", 6),
@@ -11,6 +13,8 @@ menu_items={
     10:("Manuka Smoked Salmon", 9),
     11: ("Paua Porridge", 9)
 }
+
+total_orders = []
 
 def display_menu():
     print("Rangitoto Restaurant Menu")
@@ -32,14 +36,26 @@ def select_menu():
                 print("That's not on the menu! Try again.")
         except ValueError:
             print("Please enter a number.")
-        if len(order) >= 3:
+        if len(order) >= 1:
             more = input("Would you like to order more? (y/n)").lower()
             if more != "y":
                 break
 
-
     return order
+
+def customer_details():
+    print("Customer Info")
+    name = input("Name: ")
+    phone = input("Phone Number: ")
+    delivery = input("Would you like delivery or pickup? (d/p): ").lower()
+    address = ""
+    if delivery == "d":
+        address = input("Enter your address: ")
+    return{"name": name, "phone": phone, "delivery": delivery, "address": address}
 
 display_menu()
 order = select_menu()
+customer_details()
+
 print("your order: ", order)
+print("Details: ")

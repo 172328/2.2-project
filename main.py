@@ -17,7 +17,7 @@ menu_items={
 total_orders = []
 
 def display_menu():
-    print("Rangitoto Restaurant Menu")
+    print("\nRangitoto Restaurant Menu")
     for number, (name, price) in menu_items.items():
         print(f"{number}. {name} - ${price}")
 
@@ -37,7 +37,7 @@ def select_menu():
         except ValueError:
             print("Please enter a number.")
         if len(order) >= 1:
-            more = input("Would you like to order more? (y/n)").lower()
+            more = input("Would you like to order more? (y/n) ").lower()
             if more != "y":
                 break
 
@@ -53,9 +53,32 @@ def customer_details():
         address = input("Enter your address: ")
     return{"name": name, "phone": phone, "delivery": delivery, "address": address}
 
-display_menu()
-order = select_menu()
-customer_details()
+def calculate_order(order_total, delivery):
+    subtotal = sum(menu_items[item][1] * qty for item, qty in order_total.items())
+    delivery_charge = 5 if delivery == "d" else 0
+    total = subtotal + delivery_charge
+    gst_excluded = round(total / 1.15, 2)
+    return total, gst_excluded, delivery_charge
 
-print("your order: ", order)
-print("Details: ")
+while True:
+    display_menu()
+    order_total = select_menu()
+    customer = customer_details()
+
+    print("your order: ")
+    for item_num, qty in order_total.items():
+        name, price = menu_items[item_num]
+        print(f"{name} x {qty} = ${price * qty}")
+    if customer["delivery"] =="d":
+        print("delivery: $5")
+
+
+    total, gst_excl, delivery = calculate_order(order_total, customer["delivery"])
+
+    print("\nTotal")
+    print(f"Subtotal: ${total - delivery}")
+    print(f"Delivery: ${delivery}")
+    print(f"Total (GST included): ${total}")
+    print(f"GST excluded: ${gst_excl}")
+
+

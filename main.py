@@ -1,4 +1,3 @@
-from multiprocessing.connection import address_type
 
 menu_items={
     1: ("Kawakawa Spritzer", 6),
@@ -14,7 +13,8 @@ menu_items={
     11: ("Paua Porridge", 9)
 }
 
-total_orders = []
+total_orders = [] #store all orders through the day
+gst = 1.15
 
 def display_menu():
     print("\nRangitoto Restaurant Menu")
@@ -57,7 +57,7 @@ def calculate_order(order_total, delivery):
     subtotal = sum(menu_items[item][1] * qty for item, qty in order_total.items())
     delivery_charge = 5 if delivery == "d" else 0
     total = subtotal + delivery_charge
-    gst_excluded = round(total / 1.15, 2)
+    gst_excluded = round(total / gst, 2)
     return total, gst_excluded, delivery_charge
 
 while True:
@@ -81,4 +81,26 @@ while True:
     print(f"Total (GST included): ${total}")
     print(f"GST excluded: ${gst_excl}")
 
+    total_orders.append({
+        "customer": customer,
+        "items": order_total,
+        "total": total,
+        "gst_excluded": gst_excl
+    })
+
+    again = input("Would you like to take another order? (y/n): ")
+    if again != "y":
+        break
+
+print("Day Summary:")
+for i, order in enumerate(total_orders, 1):
+    print(f"\nOrder {i}")
+    print(f"Customer: {order['customer']['name']}")
+    print(f"Phone: {order['customer']['phone']}")
+    print(f"Address {order['customer']['address']}")
+    #calculate total orders
+    print("Items Ordered:")
+    for item_num, qty in order['items'].items():
+        print(f"{menu_items[item_num][0]} x {qty}")
+    print(f"\n Day Total: ${order['total']} (GST excluded: ${order['gst_excluded']})")
 

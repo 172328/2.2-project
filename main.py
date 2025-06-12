@@ -1,4 +1,3 @@
-
 menu_items={
     1: ("Kawakawa Spritzer", 6),
     2: ("Pork and Puha Slider", 6),
@@ -15,6 +14,7 @@ menu_items={
 
 total_orders = [] #store all orders through the day
 gst = 1.15
+delivery_charge = 5
 
 def display_menu():
     print("\nRangitoto Restaurant Menu")
@@ -36,7 +36,7 @@ def select_menu():
                 print("That's not on the menu! Try again.")
         except ValueError:
             print("Please enter a number.")
-        if len(order) >= 1:
+        if len(order) >= 3:
             more = input("Would you like to order more? (y/n) ").lower()
             if more != "y":
                 break
@@ -50,15 +50,22 @@ def customer_details():
     delivery = input("Would you like delivery or pickup? (d/p): ").lower()
     address = ""
     if delivery == "d":
+        postcode = input("Enter your postcode (0620, 0630, and 0632 only): ")
+        if postcode not in ["0620", "0630", "0632"]:
+            print("Sorry, we do not deliver to that postcode, order canceled.")
         address = input("Enter your address: ")
     return{"name": name, "phone": phone, "delivery": delivery, "address": address}
 
 def calculate_order(order_total, delivery):
     subtotal = sum(menu_items[item][1] * qty for item, qty in order_total.items())
-    delivery_charge = 5 if delivery == "d" else 0
+    delivery_fee = delivery_charge if delivery == "d" else 0
     total = subtotal + delivery_charge
     gst_excluded = round(total / gst, 2)
     return total, gst_excluded, delivery_charge
+
+def cancel_order():
+    confirm = input("Cancel this order & restart? (y/n): ").lower()
+    return confirm == "y"
 
 while True:
     display_menu()
@@ -72,6 +79,9 @@ while True:
     if customer["delivery"] =="d":
         print("delivery: $5")
 
+    if cancel_order():
+        print("Order Cancelled, Restarting\n")
+        continue
 
     total, gst_excl, delivery = calculate_order(order_total, customer["delivery"])
 
